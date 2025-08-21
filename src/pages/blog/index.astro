@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Get all blog posts
+const posts = Object.values(import.meta.glob('./**/*.md', { eager: true }))
+  .filter(post => !post.frontmatter.draft)
+  .sort((a, b) => new Date(b.frontmatter.pubDate) - new Date(a.frontmatter.pubDate));
+---
+
+<Layout title="Blog">
+  <h1>Latest Posts</h1>
+  
+  <ul class="post-list">
+    {posts.map(post => (
+      <li class="post-item">
+        <a href={post.url} class="post-link">
+          <h2>{post.frontmatter.title}</h2>
+          <p class="post-excerpt">{post.frontmatter.excerpt}</p>
+          <time datetime={post.frontmatter.pubDate} class="post-date">
+            {new Date(post.frontmatter.pubDate).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	
+	.post-item {
+		margin-bottom: var(--spacing-lg);
+		padding-bottom: var(--spacing-lg);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+	
+	.post-item:last-child {
+		border-bottom: none;
+	}
+	
+	.post-link {
+		text-decoration: none;
+		color: inherit;
+		display: block;
+		transition: transform 0.2s;
+	}
+	
+	.post-link:hover {
+		transform: translateY(-2px);
+	}
+	
+	h2 {
+		margin: 0 0 var(--spacing-sm);
+		font-size: 1.75rem;
+	}
+	
+	.post-excerpt {
+		color: #a0aec0;
+		margin: 0 0 var(--spacing-md);
+	}
+	
+	.post-date {
+		color: #718096;
+		font-size: 0.875rem;
+	}
+</style>
